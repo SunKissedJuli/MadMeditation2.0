@@ -21,74 +21,27 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.Models.*
 import com.coolgirl.madmeditation.R
+import com.coolgirl.madmeditation.screens.Main.MainViewModel
 import com.coolgirl.madmeditation.user
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-var feelings : List<Feelings>? = null
-lateinit var pref : SharedPreferences
-//private var user : UserLoginDataResponse? = null
 @Composable
-fun Main(navController: NavController){
-    LoadPage()
-    SetMain(navController)
-}
+fun MainScreen(navController: NavController){
+    var viewModel: MainViewModel = viewModel()
+    viewModel.LoadFeelings()
 
-
-fun LoadPage() {
-    var apiClient = ApiClient.start().create(ApiController::class.java)
-    val call: Call<ResponseFeelings>? = apiClient.getFeelings()
-    call!!.enqueue(object : Callback<ResponseFeelings?> {
-        override fun onResponse(
-            call: Call<ResponseFeelings?>,
-            response: Response<ResponseFeelings?>
-        ) {
-            val responseData = response.body()
-            if (responseData != null) {
-                feelings = responseData.data
-            }
-        }
-        override fun onFailure(call: Call<ResponseFeelings?>, t: Throwable) {
-        }
-    })
-}
-
-fun fromMaintoMenu(navController: NavController){
-    navController.navigate("MENU")
-}
-
-fun fromMaintoProfile(navController: NavController){
-    navController.navigate("PROFILE")
-}
-
-
-@Composable
-fun SetHorizontallScroll(){
-    feelings?.let { feelingsList ->
-        for (i in 0 until feelingsList.size) {
-            val feel = feelingsList[i]
-            feel.title?.let { title ->
-                feel.image?.let { image ->
-                    ScrollItemMindset(title, image)
-                }
-            }
-        }
-    }
-}
-
-
-@Composable
-fun SetMain(navController: NavController){
     Column(modifier = Modifier
         .fillMaxSize()
         .background(colorResource(R.color.dark_green))
     ) {
-        SetMainHead(navController)
+        SetMainHead(navController, viewModel)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -97,7 +50,7 @@ fun SetMain(navController: NavController){
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Top
         ){
-            SetHorizontallScroll()
+            SetHorizontallScroll(viewModel)
         }
         Column(
             modifier = Modifier
@@ -111,12 +64,15 @@ fun SetMain(navController: NavController){
         Row(modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight(), verticalAlignment = Alignment.Bottom){
-            SetMainBottomPanel(navController)
+            SetMainBottomPanel(navController, viewModel)
         }
     }
 }
+
+
+
 @Composable
-fun SetMainHead(navController: NavController){
+fun SetMainHead(navController: NavController, viewModel: MainViewModel){
     Row(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight(0.25f),
@@ -130,7 +86,7 @@ fun SetMainHead(navController: NavController){
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier
                     .size(20.dp)
-                    .clickable { fromMaintoMenu(navController) })
+                    .clickable { navController.navigate("MENU")})
         }
         Image(
             modifier = Modifier
@@ -143,7 +99,7 @@ fun SetMainHead(navController: NavController){
             contentDescription = "image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .clickable { fromMaintoProfile(navController) }
+                .clickable {  navController.navigate("PROFILE") }
                 .size(40.dp)
                 .clip(CircleShape)
         )
@@ -156,6 +112,20 @@ fun SetMainHead(navController: NavController){
         verticalArrangement = Arrangement.Top){
         Text(text = "С возвращением, ${user?.nickName}!", color = colorResource(R.color.white), fontSize = 25.sp)
         Text(text = "Каким ты себя ощущаешь сегодня?", color = colorResource(R.color.white))
+    }
+}
+
+@Composable
+fun SetHorizontallScroll(viewModel: MainViewModel){
+    viewModel.feelings?.let { feelingsList ->
+        for (i in 0 until feelingsList.size) {
+            val feel = feelingsList[i]
+            feel.title?.let { title ->
+                feel.image?.let { image ->
+                    ScrollItemMindset(title, image)
+                }
+            }
+        }
     }
 }
 
@@ -221,7 +191,7 @@ fun ScrollItemBlock(@DrawableRes img: Int){
 }
 
 @Composable
-fun SetMainBottomPanel(navController: NavController){
+fun SetMainBottomPanel(navController: NavController, viewModel: MainViewModel){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -245,7 +215,7 @@ fun SetMainBottomPanel(navController: NavController){
                 .fillMaxHeight(0.8f)
                 .alpha(0.5f)
                 .size(20.dp)
-                .clickable { fromMaintoProfile(navController) },
+                .clickable {  navController.navigate("PROFILE") },
             painter = painterResource(R.drawable.profile_icon),
             contentDescription = "image"
         )

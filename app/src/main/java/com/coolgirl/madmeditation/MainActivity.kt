@@ -19,10 +19,6 @@ class MainActivity : ComponentActivity() {
         pref = this.getSharedPreferences("UserData", Context.MODE_PRIVATE)
         setContent {
             IsAutorize()
-        /*   androidx.compose.material.Surface(
-               modifier = Modifier.fillMaxSize()) {
-               AppNavHost(navController = rememberNavController())
-           }*/
         }
     }
 

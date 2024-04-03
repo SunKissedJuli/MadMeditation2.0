@@ -16,20 +16,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
 import com.coolgirl.madmeditation.R
 
 
-fun fromOnBoardingtoLogin(navController: NavHostController){
-    navController.navigate("LOGIN")
-}
-fun fromOnBoardingtoRegiser(navController: NavHostController){
-    navController.navigate("REGISTER")
-}
-
 @Composable
-fun OnBoarding(navController: NavHostController) {
+fun OnBoardingScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -71,7 +64,7 @@ fun OnBoarding(navController: NavHostController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Button(onClick = { fromOnBoardingtoLogin(navController) },
+            Button(onClick = { navController.navigate("LOGIN") },
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.light_green))) {
                 Text(text = "ВОЙТИ В АККАУНТ",
                     color = colorResource(R.color.white)
@@ -79,7 +72,7 @@ fun OnBoarding(navController: NavHostController) {
             }
             Text(
                 modifier = Modifier
-                    .clickable { fromOnBoardingtoRegiser(navController) },
+                    .clickable { navController.navigate("REGISTER") },
                 text = "Еще нет аккаунта? Зарегистрируйтесь",
                 color = colorResource(R.color.white)
             )
