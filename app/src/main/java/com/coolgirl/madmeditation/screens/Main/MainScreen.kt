@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
@@ -32,25 +33,26 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+var feelings : List<Feelings>? = null
 @Composable
 fun MainScreen(navController: NavController){
     var viewModel: MainViewModel = viewModel()
     viewModel.LoadFeelings()
-
     Column(modifier = Modifier
         .fillMaxSize()
         .background(colorResource(R.color.dark_green))
     ) {
         SetMainHead(navController, viewModel)
-        Row(
+        LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.25f)
-                .horizontalScroll(ScrollState(1), true),
+                .fillMaxHeight(0.25f),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Top
         ){
-            SetHorizontallScroll(viewModel)
+            feelings?.let { items(it.size){
+                SetHorizontallScroll() }
+            }
         }
         Column(
             modifier = Modifier
@@ -69,7 +71,19 @@ fun MainScreen(navController: NavController){
     }
 }
 
-
+@Composable
+fun SetHorizontallScroll(){
+    feelings?.let { feelingsList ->
+        for (i in 0 until feelingsList.size) {
+            val feel = feelingsList[i]
+            feel.title?.let { title ->
+                feel.image?.let { image ->
+                    ScrollItemMindset(title, image)
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun SetMainHead(navController: NavController, viewModel: MainViewModel){
@@ -86,7 +100,7 @@ fun SetMainHead(navController: NavController, viewModel: MainViewModel){
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier
                     .size(20.dp)
-                    .clickable { navController.navigate("MENU")})
+                    .clickable { navController.navigate("MENU") })
         }
         Image(
             modifier = Modifier
@@ -99,7 +113,7 @@ fun SetMainHead(navController: NavController, viewModel: MainViewModel){
             contentDescription = "image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .clickable {  navController.navigate("PROFILE") }
+                .clickable { navController.navigate("PROFILE") }
                 .size(40.dp)
                 .clip(CircleShape)
         )
@@ -112,20 +126,6 @@ fun SetMainHead(navController: NavController, viewModel: MainViewModel){
         verticalArrangement = Arrangement.Top){
         Text(text = "С возвращением, ${user?.nickName}!", color = colorResource(R.color.white), fontSize = 25.sp)
         Text(text = "Каким ты себя ощущаешь сегодня?", color = colorResource(R.color.white))
-    }
-}
-
-@Composable
-fun SetHorizontallScroll(viewModel: MainViewModel){
-    viewModel.feelings?.let { feelingsList ->
-        for (i in 0 until feelingsList.size) {
-            val feel = feelingsList[i]
-            feel.title?.let { title ->
-                feel.image?.let { image ->
-                    ScrollItemMindset(title, image)
-                }
-            }
-        }
     }
 }
 
@@ -215,7 +215,7 @@ fun SetMainBottomPanel(navController: NavController, viewModel: MainViewModel){
                 .fillMaxHeight(0.8f)
                 .alpha(0.5f)
                 .size(20.dp)
-                .clickable {  navController.navigate("PROFILE") },
+                .clickable { navController.navigate("Profile") },
             painter = painterResource(R.drawable.profile_icon),
             contentDescription = "image"
         )
