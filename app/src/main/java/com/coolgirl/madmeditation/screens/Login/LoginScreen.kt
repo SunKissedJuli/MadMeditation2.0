@@ -10,6 +10,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -55,7 +56,7 @@ fun LoginScreen(navController: NavHostController) {
                 contentDescription = "image"
             )
             Text(
-                text = "Sign in",
+                text = stringResource(id = R.string.signin),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(start = 30.dp),
@@ -75,7 +76,7 @@ fun LoginScreen(navController: NavHostController) {
             OutlinedTextField(
                 value = viewModel.userLogin,
                 modifier = Modifier.background(colorResource(R.color.dark_green)),
-                placeholder = { Text(text = "Email", color = colorResource(R.color.white)) },
+                placeholder = { Text(text = stringResource(id = R.string.email), color = colorResource(R.color.white)) },
                 onValueChange =  { viewModel.updateUserLogin(it) },
             )
             TextField(
@@ -83,7 +84,7 @@ fun LoginScreen(navController: NavHostController) {
                 modifier = Modifier
                     .background(colorResource(R.color.dark_green))
                     .padding(top = 20.dp),
-                placeholder = { Text(text = "Пароль", color = colorResource(R.color.white)) },
+                placeholder = { Text(text = stringResource(id = R.string.password), color = colorResource(R.color.white)) },
                 onValueChange = { viewModel.updateUserPassword(it) }
 
             )
@@ -98,10 +99,10 @@ fun LoginScreen(navController: NavHostController) {
                     .padding(top = 30.dp)
                     .alpha(0.80f)
             ) {
-                Text(text = "Sign in", color = colorResource(R.color.white))
+                Text(text = stringResource(id = R.string.signin), color = colorResource(R.color.white))
             }
             TextButton(onClick = { navController.navigate("REGISTER") }) {
-                Text(text = "Register", color = colorResource(R.color.white))
+                Text(text = stringResource(id = R.string.register), color = colorResource(R.color.white))
             }
             Button(
                 onClick = {
@@ -114,7 +115,7 @@ fun LoginScreen(navController: NavHostController) {
                     .padding(top = 4.dp)
                     .alpha(0.80f)
             ) {
-                Text(text = "Профиль", color = colorResource(R.color.white))
+                Text(text = stringResource(id = R.string.profile), color = colorResource(R.color.white))
             }
         }
     }

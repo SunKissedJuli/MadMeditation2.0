@@ -1,4 +1,24 @@
 <resources>
     <string name="app_name">MADMeditation</string>
     <string name="title_activity_on_boarding">OnBoarding</string>
+    <string name="hi">ПРИВЕТ</string>
+    <string name="enjoy">Наслаждайся отборочными.\nБудь внимателен.\nДелай хорошо.</string>
+    <string name="singin_rus">ВОЙТИ В АККАУНТ</string>
+    <string name="want_registration">Еще нет аккаунта? Зарегистрируйтесь</string>
+    <string name="will_be_register">Тут будет
+        регистрация</string>
+    <string name="will_be_photo">Тут будет\nфото</string>
+    <string name="will_be_menu">Тут будет\nменю</string>
+    <string name="signin">Sign in</string>
+    <string name="register">Register</string>
+    <string name="email">Email</string>
+    <string name="password">Пароль</string>
+    <string name="profile">Профиль</string>
+    <string name="mainblock_more">Подробнее</string>
+    <string name="exit">exit</string>
+    <string name="how_r_u">Каким ты себя ощущаешь сегодня?</string>
+    <string name="welcome_back">С возвращением,</string>
+    <string name="mainblock_heading">Заголовок блока</string>
+    <string name="mainblock_description">Кратенькое описание блока\nс двумя строчками</string>
+
 </resources>

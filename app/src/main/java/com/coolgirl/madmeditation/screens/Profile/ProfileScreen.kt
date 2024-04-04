@@ -1,12 +1,9 @@
 package com.coolgirl.madmeditation.screens
 
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -19,7 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,8 +24,6 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.R
 import com.coolgirl.madmeditation.screens.Profile.ProfileViewModel
-import com.coolgirl.madmeditation.user
-import java.lang.Math.ceil
 
 
 @Composable
@@ -39,16 +34,9 @@ fun ProfileScreen(navController: NavController){
         .background(colorResource(R.color.dark_green))
     ) {
 
-        var abracadabra = listOf<Int>(
-            R.drawable.image1,
-            R.drawable.image2,
-            R.drawable.image3,
-            R.drawable.image4,
-        )
-
         SetHead(navController, viewModel)
-        SetUserHead()
-        SetPhotoBlock(navController, viewModel, abracadabra)
+        SetUserHead(viewModel)
+        SetPhotoBlock(navController, viewModel, viewModel.SetImageList())
         SetBottomPanel(navController, viewModel)
     }
 }
@@ -77,26 +65,26 @@ fun SetHead(navController: NavController, viewModel: ProfileViewModel){
         )
         Text (
             modifier = Modifier.clickable{ navController.navigate("MAIN")},
-            text = "exit",
+            text = stringResource(id = R.string.exit),
             color = colorResource(R.color.white),)
     }
 }
 
 @Composable
-fun SetUserHead(){
+fun SetUserHead(viewModel: ProfileViewModel){
     Column(modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight(0.32f),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
-            painter = rememberImagePainter(user?.avatar),
+            painter = rememberImagePainter(viewModel.GetUser()?.avatar),
             contentDescription = "image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(130.dp)
                 .clip(CircleShape))
-        Text(text = user?.nickName.toString(), color = colorResource(R.color.white), fontSize = 30.sp)
+        Text(text = viewModel.GetUser()?.nickName.toString(), color = colorResource(R.color.white), fontSize = 30.sp)
     }
 }
 @Composable
@@ -136,7 +124,9 @@ fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, use
     var count = 2
     LazyColumn(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxHeight(0.86f).fillMaxWidth()
+        modifier = Modifier
+            .fillMaxHeight(0.86f)
+            .fillMaxWidth()
     ) {
         items(userPhoto.size/2) {
             LazyRow(

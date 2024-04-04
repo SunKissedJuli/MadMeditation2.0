@@ -7,7 +7,7 @@ import androidx.navigation.compose.rememberNavController
 fun IsAutorize(){
     val isAutorize = pref.getBoolean("isAutorize", false)
     if(isAutorize){
-        GetUser()
+        LoadLocalUser()
         AppNavHost(navController = rememberNavController(), startDestination = "MAIN")
     }else {
         AppNavHost(navController = rememberNavController(), startDestination = "ONBOARDING")

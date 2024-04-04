@@ -9,7 +9,7 @@ import androidx.navigation.NavHostController
 import com.coolgirl.madmeditation.Models.ApiClient
 import com.coolgirl.madmeditation.Models.ApiController
 import com.coolgirl.madmeditation.Models.UserLoginData
-import com.coolgirl.madmeditation.SetUser
+import com.coolgirl.madmeditation.SetLocalUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,7 +38,7 @@ class LoginViewModel : ViewModel() {
                 kotlin.run {
                     if (usr.nickName!=null){
                         withContext(Dispatchers.Main) {
-                            SetUser(usr)
+                            SetLocalUser(usr)
                             navController.navigate("MAIN")
                         }
                     }

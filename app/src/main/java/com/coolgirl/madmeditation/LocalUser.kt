@@ -4,9 +4,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.coolgirl.madmeditation.Models.UserLoginDataResponse
 
-var user : UserLoginDataResponse? = null
+private var user : UserLoginDataResponse? = null
 lateinit var pref : SharedPreferences
-fun SetUser(newUser : UserLoginDataResponse){
+fun SetLocalUser(newUser : UserLoginDataResponse){
     user = UserLoginDataResponse(
         newUser.id,
         newUser.email,
@@ -23,7 +23,7 @@ fun SetUser(newUser : UserLoginDataResponse){
     editor.putString("token", user?.avatar)
     editor.apply()
 }
-fun GetUser(){
+fun LoadLocalUser(){
     user = UserLoginDataResponse(
         pref.getString("id", ""),
         pref.getString("email", ""),
@@ -31,5 +31,9 @@ fun GetUser(){
         pref.getString("avatar", ""),
         pref.getString("token", ""),
     )
+}
+
+fun GetLocalUser() : UserLoginDataResponse?{
+    return user
 }
 

@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,16 +29,12 @@ import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.Models.*
 import com.coolgirl.madmeditation.R
 import com.coolgirl.madmeditation.screens.Main.MainViewModel
-import com.coolgirl.madmeditation.user
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-var feelings : List<Feelings>? = null
 @Composable
 fun MainScreen(navController: NavController){
     var viewModel: MainViewModel = viewModel()
     viewModel.LoadFeelings()
+
     Column(modifier = Modifier
         .fillMaxSize()
         .background(colorResource(R.color.dark_green))
@@ -50,8 +47,8 @@ fun MainScreen(navController: NavController){
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.Top
         ){
-            feelings?.let { items(it.size){
-                SetHorizontallScroll() }
+            viewModel.GetFeelings()?.let { items(it.size){
+                SetHorizontallScroll(viewModel) }
             }
         }
         Column(
@@ -72,8 +69,8 @@ fun MainScreen(navController: NavController){
 }
 
 @Composable
-fun SetHorizontallScroll(){
-    feelings?.let { feelingsList ->
+fun SetHorizontallScroll(viewModel: MainViewModel){
+    viewModel.GetFeelings()?.let { feelingsList ->
         for (i in 0 until feelingsList.size) {
             val feel = feelingsList[i]
             feel.title?.let { title ->
@@ -109,7 +106,7 @@ fun SetMainHead(navController: NavController, viewModel: MainViewModel){
             contentDescription = "image"
         )
         Image(
-            painter = rememberImagePainter(user?.avatar),
+            painter = rememberImagePainter( viewModel.GetUser()?.avatar),
             contentDescription = "image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -124,8 +121,8 @@ fun SetMainHead(navController: NavController, viewModel: MainViewModel){
             .fillMaxHeight(0.15f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top){
-        Text(text = "С возвращением, ${user?.nickName}!", color = colorResource(R.color.white), fontSize = 25.sp)
-        Text(text = "Каким ты себя ощущаешь сегодня?", color = colorResource(R.color.white))
+        Text(text = (stringResource(id = R.string.welcome_back) +" ${ viewModel.GetUser()?.nickName}!"), color = colorResource(R.color.white), fontSize = 25.sp)
+        Text(text = stringResource(id =R.string.how_r_u), color = colorResource(R.color.white))
     }
 }
 
@@ -174,12 +171,12 @@ fun ScrollItemBlock(@DrawableRes img: Int){
                 .background(colorResource(R.color.white))) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column( verticalArrangement = Arrangement.SpaceEvenly) {
-                    Text(text = "Заголовок блока", color = colorResource(R.color.dark_green), fontSize = 23.sp)
-                    Text(text = "Кратенькое описание блока \nс двумя строчками", color = colorResource(R.color.dark_green), fontSize = 15.sp,
+                    Text(text = stringResource(id = R.string.mainblock_heading), color = colorResource(R.color.dark_green), fontSize = 23.sp)
+                    Text(text = stringResource(id = R.string.mainblock_description), color = colorResource(R.color.dark_green), fontSize = 15.sp,
                         modifier = Modifier.padding(bottom = 15.dp))
                     Button(onClick = {  },
                         colors = ButtonDefaults.buttonColors(colorResource(R.color.dark_green))) {
-                        Text(text = "Подробнее",color = colorResource(R.color.white))
+                        Text(text = stringResource(id = R.string.mainblock_more),color = colorResource(R.color.white))
                     }
                 }
                 Image(

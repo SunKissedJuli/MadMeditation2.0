@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.coolgirl.madmeditation.R
@@ -22,8 +23,7 @@ fun Photo(navController: NavController){
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Тут будет\n" +
-                "фото", color = colorResource(R.color.white),
+        Text(text = stringResource(id = R.string.will_be_photo), color = colorResource(R.color.white),
             fontSize = 30.sp)
     }
 }

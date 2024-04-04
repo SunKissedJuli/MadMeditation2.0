@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -50,10 +51,10 @@ fun OnBoardingScreen(navController: NavHostController) {
                 painter = painterResource(id = R.drawable.logo),
                 contentDescription = "image"
             )
-            Text(text = "ПРИВЕТ",
+            Text(text = stringResource(id = R.string.hi),
                 color = colorResource(R.color.white)
             )
-            Text(text = "Наслаждайся отборочными.\nБудь внимателен. \nДелай хорошо.",
+            Text(text = stringResource(id = R.string.enjoy),
                 textAlign = TextAlign.Center,
                 color = colorResource(R.color.white)
             )
@@ -66,14 +67,14 @@ fun OnBoardingScreen(navController: NavHostController) {
         ){
             Button(onClick = { navController.navigate("LOGIN") },
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.light_green))) {
-                Text(text = "ВОЙТИ В АККАУНТ",
+                Text(text = stringResource(id = R.string.singin_rus),
                     color = colorResource(R.color.white)
                 )
             }
             Text(
                 modifier = Modifier
                     .clickable { navController.navigate("REGISTER") },
-                text = "Еще нет аккаунта? Зарегистрируйтесь",
+                text = stringResource(id = R.string.want_registration),
                 color = colorResource(R.color.white)
             )
         }
