@@ -20,5 +20,7 @@
     <string name="welcome_back">С возвращением,</string>
     <string name="mainblock_heading">Заголовок блока</string>
     <string name="mainblock_description">Кратенькое описание блока\nс двумя строчками</string>
+    <string name="delite">удалить</string>
+    <string name="close">закрыть</string>
 
 </resources>

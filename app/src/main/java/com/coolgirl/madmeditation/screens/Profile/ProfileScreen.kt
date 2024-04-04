@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -128,13 +129,11 @@ fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, use
             .fillMaxHeight(0.86f)
             .fillMaxWidth()
     ) {
-        items(userPhoto.size/2) {
-            LazyRow(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-
+        items(userPhoto.size/2) {columnIndex ->
+            LazyRow(modifier = Modifier.fillMaxWidth()) {
                 if(i+1 > userPhoto.size){count=1}
-                items(count) {
+                items(count) { rowIndex ->
+                    val currentIndex = columnIndex * 2 + rowIndex
                     Card(
                         modifier = Modifier
                             .padding(25.dp, 20.dp, 0.dp, 10.dp)
@@ -144,12 +143,14 @@ fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, use
                         elevation = 5.dp
                     ) {
                         Image(
-                            painter = painterResource(userPhoto[i]),
+                            painter = painterResource(userPhoto[currentIndex]),
                             contentDescription = "image",
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clickable { viewModel.fromProfiletoPhoto(navController) })
+                                .clickable {
+                                    viewModel.fromProfiletoPhoto(navController, currentIndex)
+                                })
                     }
                     i++
                 }

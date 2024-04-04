@@ -10,7 +10,7 @@ import com.coolgirl.madmeditation.R
 class ProfileViewModel : ViewModel() {
 
     private var user : UserLoginDataResponse? = SetUser()
-
+    private var imageList : List<Int> = SetImageList()
     fun GetUser() : UserLoginDataResponse?{
         return user
     }
@@ -31,5 +31,7 @@ class ProfileViewModel : ViewModel() {
     }
 
     //он научится принимать аргумент фото
-    fun fromProfiletoPhoto(navController: NavController){ navController.navigate("PHOTO") }
+    fun fromProfiletoPhoto(navController: NavController, i : Int){
+        val selectedPhoto = imageList.get(i)
+        navController.navigate("PHOTO/${selectedPhoto}") }
 }
