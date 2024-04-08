@@ -1,15 +1,17 @@
 package com.coolgirl.madmeditation.screens
 
+import android.net.Uri
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -25,45 +27,45 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.R
 import com.coolgirl.madmeditation.screens.Profile.ProfileViewModel
+import kotlinx.coroutines.awaitAll
+import kotlin.math.roundToInt
 
 
 @Composable
 fun ProfileScreen(navController: NavController){
     val viewModel : ProfileViewModel = viewModel()
-    Column(modifier = Modifier
+    Column(
+        modifier = Modifier
         .fillMaxSize()
         .background(colorResource(R.color.dark_green))
     ) {
-
         SetHead(navController, viewModel)
         SetUserHead(viewModel)
-        SetPhotoBlock(navController, viewModel, viewModel.SetImageList())
+        SetPhotoBlock(navController, viewModel, viewModel.NewImage())
         SetBottomPanel(navController, viewModel)
     }
 }
 
 @Composable
 fun SetHead(navController: NavController, viewModel: ProfileViewModel){
-    Row(modifier = Modifier
+    Row(
+        modifier = Modifier
         .fillMaxWidth()
         .fillMaxHeight(0.25f),
         horizontalArrangement = Arrangement.SpaceAround,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Box() {
-            Image(
-                painter = painterResource(id = R.drawable.hamburger),
-                contentDescription = null,
-                contentScale = ContentScale.FillHeight,
-                modifier = Modifier
-                    .size(20.dp)
-                    .clickable { navController.navigate("MENU") })
-        }
+        verticalAlignment = Alignment.CenterVertically) {
+        Image(
+            painter = painterResource(id = R.drawable.hamburger),
+            contentDescription = null,
+            contentScale = ContentScale.FillHeight,
+            modifier = Modifier
+                .size(20.dp)
+                .clickable { navController.navigate("MENU") })
+
         Image(
             modifier = Modifier.fillMaxWidth(0.25f),
             painter = painterResource(id = R.drawable.logo),
-            contentDescription = "image"
-        )
+            contentDescription = "image")
         Text (
             modifier = Modifier.clickable{ navController.navigate("MAIN")},
             text = stringResource(id = R.string.exit),
@@ -101,60 +103,82 @@ fun SetBottomPanel(navController: NavController, viewModel: ProfileViewModel){
                 .alpha(0.3f)
                 .clickable { navController.navigate("MAIN") },
             painter = painterResource(R.drawable.logo),
-            contentDescription = "image"
-        )
+            contentDescription = "image")
         Image(
             modifier = Modifier
                 .fillMaxHeight(0.8f)
                 .size(20.dp),
             painter = painterResource(R.drawable.sound_icon),
-            contentDescription = "image"
-        )
+            contentDescription = "image")
         Image(
             modifier = Modifier
                 .fillMaxHeight(0.8f)
                 .size(20.dp),
             painter = painterResource(R.drawable.profile_icon),
-            contentDescription = "image"
-        )
+            contentDescription = "image")
     }
 }
+
 @Composable
-fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, userPhoto : List<Int>) {
-    var i = 0
-    var count = 2
-    LazyColumn(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxHeight(0.86f)
-            .fillMaxWidth()
-    ) {
-        items(userPhoto.size/2) {columnIndex ->
-            LazyRow(modifier = Modifier.fillMaxWidth()) {
-                if(i+1 > userPhoto.size){count=1}
-                items(count) { rowIndex ->
-                    val currentIndex = columnIndex * 2 + rowIndex
-                    Card(
-                        modifier = Modifier
-                            .padding(25.dp, 20.dp, 0.dp, 10.dp)
-                            .height(100.dp)
-                            .width(150.dp),
-                        shape = RoundedCornerShape(15.dp),
-                        elevation = 5.dp
-                    ) {
-                        Image(
-                            painter = painterResource(userPhoto[currentIndex]),
-                            contentDescription = "image",
-                            contentScale = ContentScale.Crop,
+fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, launcher: ManagedActivityResultLauncher<String, Uri?>) {
+    key(viewModel.imagee){
+        val columnItems : Int = ((viewModel.SetImageList().size).toFloat()/2).roundToInt()
+        LazyColumn(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier
+                .fillMaxHeight(0.86f)
+                .fillMaxWidth()
+        ) {
+            items(columnItems) { columnIndex ->
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
+                    val count = if (columnIndex == columnItems - 1 && viewModel.SetImageList().size % 2 != 0) 1 else 2
+                    items(count) { rowIndex ->
+                        val currentIndex = columnIndex * 2 + rowIndex
+                        Card(
                             modifier = Modifier
-                                .fillMaxSize()
-                                .clickable {
-                                    viewModel.fromProfiletoPhoto(navController, currentIndex)
-                                })
-                    }
-                    i++
-                }
+                                .padding(25.dp, 20.dp, 0.dp, 10.dp)
+                                .height(100.dp)
+                                .width(150.dp),
+                            shape = RoundedCornerShape(15.dp),
+                            elevation = 5.dp) {
+                            Image(
+                                painter = rememberImagePainter(viewModel.SetImageList()[currentIndex]),
+                                contentDescription = "image",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .clickable {
+                                        Log.d("Tag", "В ProfileScreen currentIndex = " + currentIndex)
+                                        viewModel.fromProfiletoPhoto(navController, currentIndex) }) }
+                    } }
             }
-        }
+            item(1){
+                Card(
+                    modifier = Modifier
+                        .padding(25.dp, 20.dp, 0.dp, 10.dp)
+                        .height(100.dp)
+                        .width(150.dp),
+                    shape = RoundedCornerShape(15.dp),
+                    backgroundColor = colorResource(id = R.color.light_green),
+                    elevation = 5.dp) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxSize(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "+",
+                            color = colorResource(id = R.color.white),
+                            fontSize = 30.sp,
+                        modifier = Modifier
+                                .clickable { launcher.launch("image/*")})
+                    }
+            }
+        }}
     }
 }
+
+
+
+
+

@@ -9,8 +9,6 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MainViewModel : ViewModel() {
-
-
     private var user : UserLoginDataResponse? = SetUser()
     private var feelings : List<Feelings>? = null
 
