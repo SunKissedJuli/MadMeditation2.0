@@ -1,7 +1,6 @@
 package com.coolgirl.madmeditation.screens
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -26,8 +25,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.R
+import com.coolgirl.madmeditation.screens.Profile.ImageData
 import com.coolgirl.madmeditation.screens.Profile.ProfileViewModel
-import kotlinx.coroutines.awaitAll
 import kotlin.math.roundToInt
 
 
@@ -142,15 +141,18 @@ fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, lau
                             shape = RoundedCornerShape(15.dp),
                             elevation = 5.dp) {
                             Image(
-                                painter = rememberImagePainter(viewModel.SetImageList()[currentIndex]),
+                                painter = when (val image = viewModel.SetImageList()[currentIndex]) {
+                                    is ImageData.ImageResource -> rememberImagePainter(image.resourceId)
+                                    is ImageData.ImageUri -> rememberImagePainter(image.uri)
+                                    else -> { rememberImagePainter(R.drawable.sorry)} },
                                 contentDescription = "image",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .clickable {
-                                        Log.d("Tag", "В ProfileScreen currentIndex = " + currentIndex)
-                                        viewModel.fromProfiletoPhoto(navController, currentIndex) }) }
-                    } }
+                                    .clickable { viewModel.fromProfiletoPhoto(navController, currentIndex) })
+                        }
+                    }
+                }
             }
             item(1){
                 Card(
@@ -177,8 +179,3 @@ fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, lau
         }}
     }
 }
-
-
-
-
-

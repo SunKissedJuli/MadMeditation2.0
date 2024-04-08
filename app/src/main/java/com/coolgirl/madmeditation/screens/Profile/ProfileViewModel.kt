@@ -1,35 +1,25 @@
 package com.coolgirl.madmeditation.screens.Profile
 
-import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.net.Uri
-import android.os.Build
-import android.os.Environment
-import android.provider.MediaStore
-import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.madmeditation.GetLocalUser
 import com.coolgirl.madmeditation.Models.UserLoginDataResponse
 import com.coolgirl.madmeditation.R
-import java.io.File
-import java.util.*
-import kotlin.random.Random
-
+import com.coolgirl.madmeditation.pref
+import com.google.gson.*
+import com.google.gson.reflect.TypeToken
+import java.lang.reflect.Type
 
 class ProfileViewModel : ViewModel() {
 
     private var user: UserLoginDataResponse? = SetUser()
     var imagee = ""
-    private var imageList: List<Any> = SetImageList()
-
-
+    private val imageList = LoadPhotos()
 
     fun GetUser(): UserLoginDataResponse? {
         return user
@@ -40,29 +30,12 @@ class ProfileViewModel : ViewModel() {
         return user
     }
     fun SetImageList(): List<Any> {
-        if(!imagee.equals("")){
-            var imageList = listOf<Any>(
-                R.drawable.image1,
-                R.drawable.image2,
-                R.drawable.image3,
-                R.drawable.image4,
-                imagee
-            )
-            return imageList
-        }else{
-            var imageList = listOf<Any>(
-                R.drawable.image1,
-                R.drawable.image2,
-                R.drawable.image3,
-                R.drawable.image4,
-            )
-            return imageList
-        }
+        return imageList
     }
 
     fun fromProfiletoPhoto(navController: NavController, i: Int) {
-        val selectedPhoto = imageList.get(i)
-        navController.navigate("PHOTO/${selectedPhoto}")
+        val selectedPhoto = imageList.get(i).toString()
+        navController.navigate("PHOTO/${selectedPhoto.substring(((selectedPhoto.indexOf("=") + 1)), (selectedPhoto.lastIndexOf(")")))}")
     }
 
     @Composable
@@ -71,8 +44,48 @@ class ProfileViewModel : ViewModel() {
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? -> imageUri = uri }
         if(imageUri!=null&& imageUri.toString()!=(imagee)){
             imagee = imageUri.toString()
+            imageList.add(ImageData.ImageUri(imagee))
+            SavePhotos(imageList)
         }
         return launcher
+    }
+
+    fun SavePhotos(photoList : List<ImageData>) {
+        val editor = pref.edit()
+        val json = Gson().toJson(photoList)
+        editor.putString("key", json)
+        editor.apply()
+    }
+
+    fun LoadPhotos(): MutableList<ImageData> {
+        val json = pref.getString("key", null)
+        val gsonBuilder = GsonBuilder()
+        gsonBuilder.registerTypeAdapter(ImageData::class.java, ImageDataDeserializer())
+        val gson = gsonBuilder.create()
+        if(json!=null){
+            val listType = object : TypeToken<MutableList<ImageData>>() {}.type
+            return gson.fromJson(json, listType)
+        }else{
+            SavePhotos(listOf(
+                ImageData.ImageResource(R.drawable.image1),
+                ImageData.ImageResource(R.drawable.image2),
+                ImageData.ImageResource(R.drawable.image3),
+                ImageData.ImageResource(R.drawable.image4),
+                ImageData.ImageUri("content://com.android.providers.media.documents/document/image%3A21728")))
+                val json = pref.getString("key", null)
+            val listType = object : TypeToken<MutableList<ImageData>>() {}.type
+            return gson.fromJson(json, listType)
+        }
+    }
+    class ImageDataDeserializer : JsonDeserializer<ImageData> {
+        override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): ImageData {
+            val jsonObject = json.asJsonObject
+            return if (jsonObject.has("resourceId")) {
+                ImageData.ImageResource(jsonObject.get("resourceId").asInt)
+            } else {
+                ImageData.ImageUri(jsonObject.get("uri").asString)
+            }
+        }
     }
 }
 
