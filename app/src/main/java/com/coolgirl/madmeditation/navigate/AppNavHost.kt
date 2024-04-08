@@ -9,6 +9,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.coolgirl.madmeditation.screens.*
 import com.coolgirl.madmeditation.screens.Login.LoginScreen
+import com.coolgirl.madmeditation.screens.Profile.ProfileState
 
 @Composable
 fun AppNavHost(
@@ -30,15 +31,16 @@ fun AppNavHost(
         composable(NavigationItem.Register.route){
             Register(navController)
         }
-        composable(NavigationItem.Photo.route +"/{photo}",
-            arguments = listOf(navArgument("photo"){
-                type = NavType.Companion.IntType
-                defaultValue = R.drawable.zaglushka
-            })){
-                backStackEntry ->
-            val userPhoto = backStackEntry.arguments?.getInt("photo")
+        composable(NavigationItem.Photo.route +"/{photo}"){ backStackEntry ->
+            val userPhoto = backStackEntry.arguments?.getString("photo").toString()
             if (userPhoto != null) {
-                PhotoScreen(navController, userPhoto)
+                if(  userPhoto.any { it.isLetter() }){
+                    val a = ProfileState.ImageUri(userPhoto)
+                    PhotoScreen(navController, a)
+                }else{
+                    val a = ProfileState.ImageResource(userPhoto.toInt())
+                    PhotoScreen(navController, a)
+                }
             }
         }
 

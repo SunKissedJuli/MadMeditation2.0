@@ -25,7 +25,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.R
-import com.coolgirl.madmeditation.screens.Profile.ImageData
+import com.coolgirl.madmeditation.screens.Profile.ProfileState
 import com.coolgirl.madmeditation.screens.Profile.ProfileViewModel
 import kotlin.math.roundToInt
 
@@ -142,8 +142,8 @@ fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, lau
                             elevation = 5.dp) {
                             Image(
                                 painter = when (val image = viewModel.SetImageList()[currentIndex]) {
-                                    is ImageData.ImageResource -> rememberImagePainter(image.resourceId)
-                                    is ImageData.ImageUri -> rememberImagePainter(image.uri)
+                                    is ProfileState.ImageResource -> rememberImagePainter(image.resourceId)
+                                    is ProfileState.ImageUri -> rememberImagePainter(image.uri)
                                     else -> { rememberImagePainter(R.drawable.sorry)} },
                                 contentDescription = "image",
                                 contentScale = ContentScale.Crop,

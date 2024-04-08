@@ -35,7 +35,8 @@ class ProfileViewModel : ViewModel() {
 
     fun fromProfiletoPhoto(navController: NavController, i: Int) {
         val selectedPhoto = imageList.get(i).toString()
-        navController.navigate("PHOTO/${selectedPhoto.substring(((selectedPhoto.indexOf("=") + 1)), (selectedPhoto.lastIndexOf(")")))}")
+        val photoPath = selectedPhoto.substring(((selectedPhoto.indexOf("=") + 1)), (selectedPhoto.lastIndexOf(")")))
+        navController.navigate("PHOTO/${photoPath.toString()}")
     }
 
     @Composable
@@ -44,46 +45,45 @@ class ProfileViewModel : ViewModel() {
         val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? -> imageUri = uri }
         if(imageUri!=null&& imageUri.toString()!=(imagee)){
             imagee = imageUri.toString()
-            imageList.add(ImageData.ImageUri(imagee))
+            imageList.add(ProfileState.ImageUri(imagee))
             SavePhotos(imageList)
         }
         return launcher
     }
 
-    fun SavePhotos(photoList : List<ImageData>) {
+    fun SavePhotos(photoList : List<ProfileState>) {
         val editor = pref.edit()
         val json = Gson().toJson(photoList)
         editor.putString("key", json)
         editor.apply()
     }
 
-    fun LoadPhotos(): MutableList<ImageData> {
+    fun LoadPhotos(): MutableList<ProfileState> {
         val json = pref.getString("key", null)
         val gsonBuilder = GsonBuilder()
-        gsonBuilder.registerTypeAdapter(ImageData::class.java, ImageDataDeserializer())
+        gsonBuilder.registerTypeAdapter(ProfileState::class.java, ImageDataDeserializer())
         val gson = gsonBuilder.create()
         if(json!=null){
-            val listType = object : TypeToken<MutableList<ImageData>>() {}.type
+            val listType = object : TypeToken<MutableList<ProfileState>>() {}.type
             return gson.fromJson(json, listType)
         }else{
             SavePhotos(listOf(
-                ImageData.ImageResource(R.drawable.image1),
-                ImageData.ImageResource(R.drawable.image2),
-                ImageData.ImageResource(R.drawable.image3),
-                ImageData.ImageResource(R.drawable.image4),
-                ImageData.ImageUri("content://com.android.providers.media.documents/document/image%3A21728")))
+                ProfileState.ImageResource(R.drawable.image1),
+                ProfileState.ImageResource(R.drawable.image2),
+                ProfileState.ImageResource(R.drawable.image3),
+                ProfileState.ImageResource(R.drawable.image4)))
                 val json = pref.getString("key", null)
-            val listType = object : TypeToken<MutableList<ImageData>>() {}.type
+            val listType = object : TypeToken<MutableList<ProfileState>>() {}.type
             return gson.fromJson(json, listType)
         }
     }
-    class ImageDataDeserializer : JsonDeserializer<ImageData> {
-        override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): ImageData {
+    class ImageDataDeserializer : JsonDeserializer<ProfileState> {
+        override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): ProfileState {
             val jsonObject = json.asJsonObject
             return if (jsonObject.has("resourceId")) {
-                ImageData.ImageResource(jsonObject.get("resourceId").asInt)
+                ProfileState.ImageResource(jsonObject.get("resourceId").asInt)
             } else {
-                ImageData.ImageUri(jsonObject.get("uri").asString)
+                ProfileState.ImageUri(jsonObject.get("uri").asString)
             }
         }
     }

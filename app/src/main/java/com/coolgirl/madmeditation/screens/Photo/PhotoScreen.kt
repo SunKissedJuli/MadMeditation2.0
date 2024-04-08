@@ -1,6 +1,5 @@
 package com.coolgirl.madmeditation.screens
 
-import android.widget.ImageView.ScaleType
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,18 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.modifier.modifierLocalConsumer
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.R
 import com.coolgirl.madmeditation.screens.Photo.PhotoViewModel
+import com.coolgirl.madmeditation.screens.Profile.ProfileState
 
 @Composable
-fun PhotoScreen(navController: NavController, userPhoto : Int){
+fun PhotoScreen(navController: NavController, userPhoto: ProfileState){
     val viewModel : PhotoViewModel = viewModel()
     Column(
         modifier = Modifier
@@ -36,7 +34,7 @@ fun PhotoScreen(navController: NavController, userPhoto : Int){
 }
 
 @Composable
-fun SetPhoto(userPhoto: Int){
+fun SetPhoto(userPhoto: ProfileState){
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,7 +42,10 @@ fun SetPhoto(userPhoto: Int){
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
         Image(
-            painter = painterResource(id = userPhoto),
+            painter = when (val image : ProfileState = userPhoto) {
+                is ProfileState.ImageResource -> rememberImagePainter(image.resourceId)
+                is ProfileState.ImageUri -> rememberImagePainter(image.uri)
+                else -> { rememberImagePainter(R.drawable.sorry)} },
             contentDescription = "image",
             contentScale = ContentScale.FillWidth,
             modifier = Modifier.fillMaxWidth())
