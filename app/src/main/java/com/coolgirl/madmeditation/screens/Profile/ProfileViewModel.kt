@@ -1,25 +1,37 @@
 package com.coolgirl.madmeditation.screens.Profile
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.database.Cursor
 import android.net.Uri
+import android.provider.OpenableColumns
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.madmeditation.GetLocalUser
+import com.coolgirl.madmeditation.ImageLoader
 import com.coolgirl.madmeditation.Models.UserLoginDataResponse
 import com.coolgirl.madmeditation.R
 import com.coolgirl.madmeditation.pref
 import com.google.gson.*
 import com.google.gson.reflect.TypeToken
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
 import java.lang.reflect.Type
+
 
 class ProfileViewModel : ViewModel() {
 
     private var user: UserLoginDataResponse? = SetUser()
     var imagee = ""
-    private val imageList = LoadPhotos()
+    var imageLoader = ImageLoader()
+    private val imageList = imageLoader.LoadPhotos()
 
     fun GetUser(): UserLoginDataResponse? {
         return user
@@ -33,61 +45,47 @@ class ProfileViewModel : ViewModel() {
         return imageList
     }
 
-    fun fromProfiletoPhoto(navController: NavController, i: Int) {
-        val selectedPhoto = imageList.get(i).toString()
-        val photoPath = selectedPhoto.substring(((selectedPhoto.indexOf("=") + 1)), (selectedPhoto.lastIndexOf(")")))
-        navController.navigate("PHOTO/${photoPath.toString()}")
-    }
-
+    @SuppressLint("Range")
     @Composable
-    fun NewImage() : ManagedActivityResultLauncher<String, Uri?> {
-        var imageUri by remember { mutableStateOf<Uri?>(null) }
-        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? -> imageUri = uri }
-        if(imageUri!=null&& imageUri.toString()!=(imagee)){
-            imagee = imageUri.toString()
-            imageList.add(ProfileState.ImageUri(imagee))
-            SavePhotos(imageList)
+    fun NewImage(context: Context = LocalContext.current): ManagedActivityResultLauncher<String, Uri?> {
+        var filePath by remember { mutableStateOf<String?>(null) }
+        val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            if (uri!!.scheme.equals("content")) {
+                val cursor: Cursor? = context.getContentResolver().query(uri, null, null, null, null)
+                try {
+                    if (cursor != null && cursor.moveToFirst()) {
+                        var fileName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                        val iStream : InputStream = context.contentResolver.openInputStream(uri!!)!!
+                        val outputDir : File = context.cacheDir
+                        val outputFile : File = File(outputDir,fileName)
+                        copyStreamToFile(iStream, outputFile)
+                        iStream.close()
+                        filePath = outputFile.invariantSeparatorsPath
+                    }
+                } finally { cursor!!.close() }
+            }
+        }
+        if (filePath != null && filePath.toString() != imagee) {
+            imageList.add(ProfileState.ImageUri(filePath))
+            imageLoader.SavePhotos(imageList)
+            imagee = filePath.toString()
         }
         return launcher
     }
 
-    fun SavePhotos(photoList : List<ProfileState>) {
-        val editor = pref.edit()
-        val json = Gson().toJson(photoList)
-        editor.putString("key", json)
-        editor.apply()
-    }
-
-    fun LoadPhotos(): MutableList<ProfileState> {
-        val json = pref.getString("key", null)
-        val gsonBuilder = GsonBuilder()
-        gsonBuilder.registerTypeAdapter(ProfileState::class.java, ImageDataDeserializer())
-        val gson = gsonBuilder.create()
-        if(json!=null){
-            val listType = object : TypeToken<MutableList<ProfileState>>() {}.type
-            return gson.fromJson(json, listType)
-        }else{
-            SavePhotos(listOf(
-                ProfileState.ImageResource(R.drawable.image1),
-                ProfileState.ImageResource(R.drawable.image2),
-                ProfileState.ImageResource(R.drawable.image3),
-                ProfileState.ImageResource(R.drawable.image4)))
-                val json = pref.getString("key", null)
-            val listType = object : TypeToken<MutableList<ProfileState>>() {}.type
-            return gson.fromJson(json, listType)
-        }
-    }
-    class ImageDataDeserializer : JsonDeserializer<ProfileState> {
-        override fun deserialize(json: JsonElement, typeOfT: Type?, context: JsonDeserializationContext?): ProfileState {
-            val jsonObject = json.asJsonObject
-            return if (jsonObject.has("resourceId")) {
-                ProfileState.ImageResource(jsonObject.get("resourceId").asInt)
-            } else {
-                ProfileState.ImageUri(jsonObject.get("uri").asString)
+    fun copyStreamToFile(inputStream: InputStream, outputFile: File) {
+        inputStream.use { input ->
+            val outputStream = FileOutputStream(outputFile)
+            outputStream.use { output ->
+                val buffer = ByteArray(4 * 1024) // buffer size
+                while (true) {
+                    val byteCount = input.read(buffer)
+                    if (byteCount < 0) break
+                    output.write(buffer, 0, byteCount)
+                }
+                output.flush()
             }
         }
     }
+
 }
-
-
-

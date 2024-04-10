@@ -1,6 +1,8 @@
 package com.coolgirl.madmeditation.screens
 
+import android.graphics.BitmapFactory
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -15,14 +17,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toFile
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.R
 import com.coolgirl.madmeditation.screens.Profile.ProfileState
@@ -66,7 +72,7 @@ fun SetHead(navController: NavController, viewModel: ProfileViewModel){
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "image")
         Text (
-            modifier = Modifier.clickable{ navController.navigate("MAIN")},
+            modifier = Modifier.clickable{ navController.navigate("LOGIN")},
             text = stringResource(id = R.string.exit),
             color = colorResource(R.color.white),)
     }
@@ -118,6 +124,7 @@ fun SetBottomPanel(navController: NavController, viewModel: ProfileViewModel){
     }
 }
 
+@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, launcher: ManagedActivityResultLauncher<String, Uri?>) {
     key(viewModel.imagee){
@@ -142,14 +149,16 @@ fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, lau
                             elevation = 5.dp) {
                             Image(
                                 painter = when (val image = viewModel.SetImageList()[currentIndex]) {
+                                    is ProfileState.ImageUri -> rememberImagePainter(BitmapFactory.decodeFile(image.uri))
                                     is ProfileState.ImageResource -> rememberImagePainter(image.resourceId)
-                                    is ProfileState.ImageUri -> rememberImagePainter(image.uri)
                                     else -> { rememberImagePainter(R.drawable.sorry)} },
+
                                 contentDescription = "image",
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .clickable { viewModel.fromProfiletoPhoto(navController, currentIndex) })
+                                    .clickable {
+                                        navController.navigate("PHOTO/${currentIndex}") })
                         }
                     }
                 }

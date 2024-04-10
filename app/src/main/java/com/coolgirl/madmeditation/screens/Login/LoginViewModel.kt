@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
+import com.coolgirl.madmeditation.GetLocalUser
 import com.coolgirl.madmeditation.Models.ApiClient
 import com.coolgirl.madmeditation.Models.ApiController
 import com.coolgirl.madmeditation.Models.UserLoginData
@@ -27,6 +28,13 @@ class LoginViewModel : ViewModel() {
     }
     fun updateUserLogin(login : String) {
         userLogin= login
+    }
+
+    fun LoadUserData(){
+        val user = GetLocalUser()
+        if(user?.nickName!=null && !user.nickName.equals("")){
+           userLogin = user.email!!
+        }
     }
 
     fun Autorization(navController: NavHostController) {
