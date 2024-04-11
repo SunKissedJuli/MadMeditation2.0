@@ -38,7 +38,6 @@ fun IsAutorize() {
         LoadUserData(userLogin, userPassword)
        key(change){
            AppNavHost(navController = rememberNavController(), startDestination = Screen.Main.route)
-           Log.d("tag", "Проверка авторизации (перешли на Main) responseUser = " + GetLocalUser())
        }
     } else {
         AppNavHost(navController = rememberNavController(), startDestination = Screen.OnBoarding.route)
@@ -54,7 +53,6 @@ fun LoadUserData(userLogin : String, userPassword : String) {
             val responseUser = response.body()
             if (responseUser != null) {
                 SetLocalUser(responseUser)
-                Log.d("tag", "Проверка авторизации responseUser = " + responseUser)
                 change = "change"
 
             }
