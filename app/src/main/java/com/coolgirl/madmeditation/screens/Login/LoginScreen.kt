@@ -17,12 +17,19 @@ import androidx.navigation.NavHostController
 import com.coolgirl.madmeditation.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.coolgirl.madmeditation.Screen
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
     val viewModel : LoginViewModel = viewModel()
-    viewModel.LoadUserData()
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(key1 = Unit) {
+        coroutineScope.launch() {
+            viewModel.LoadUserData()
+        }
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()

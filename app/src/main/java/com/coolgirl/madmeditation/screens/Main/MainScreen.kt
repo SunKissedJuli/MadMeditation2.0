@@ -2,6 +2,7 @@ package com.coolgirl.madmeditation.screens
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -12,7 +13,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -30,26 +31,36 @@ import com.coolgirl.madmeditation.Models.*
 import com.coolgirl.madmeditation.R
 import com.coolgirl.madmeditation.Screen
 import com.coolgirl.madmeditation.screens.Main.MainViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun MainScreen(navController: NavController){
     var viewModel: MainViewModel = viewModel()
-    viewModel.LoadFeelings()
+    val coroutineScope = rememberCoroutineScope()
+    LaunchedEffect(key1 = Unit) {
+        coroutineScope.launch() {
+            viewModel.LoadFeelings()
+        }
+    }
 
     Column(modifier = Modifier
         .fillMaxSize()
         .background(colorResource(R.color.dark_green))
     ) {
         SetMainHead(navController, viewModel)
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight(0.25f),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.Top
-        ){
-            viewModel.GetFeelings()?.let { items(it.size){
-                SetHorizontallScroll(viewModel) }
+        key(viewModel.change){
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.25f),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.Top
+            ){
+                if(viewModel.GetFeelings()!=null){
+                    viewModel.GetFeelings()?.let { items(it.size){
+                        SetHorizontallScroll(viewModel) }
+                    }
+                }
             }
         }
         Column(
@@ -71,12 +82,16 @@ fun MainScreen(navController: NavController){
 
 @Composable
 fun SetHorizontallScroll(viewModel: MainViewModel){
-    viewModel.GetFeelings()?.let { feelingsList ->
-        for (i in 0 until feelingsList.size) {
-            val feel = feelingsList[i]
-            feel.title?.let { title ->
-                feel.image?.let { image ->
-                    ScrollItemMindset(title, image)
+    key(viewModel.change){
+        if(viewModel.GetFeelings()!=null){
+            viewModel.GetFeelings()?.let { feelingsList ->
+                for (i in 0 until feelingsList.size) {
+                    val feel = feelingsList[i]
+                    feel.title?.let { title ->
+                        feel.image?.let { image ->
+                            ScrollItemMindset(title, image)
+                        }
+                    }
                 }
             }
         }
