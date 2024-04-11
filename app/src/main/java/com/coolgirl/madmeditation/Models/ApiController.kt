@@ -9,7 +9,7 @@ import retrofit2.http.POST
 interface ApiController {
     @Headers("Accept: application/json")
     @POST("user/login")
-    suspend fun autorizeClient(@Body clientData:UserLoginData): UserLoginDataResponse
+    fun autorizeClient(@Body clientData:UserLoginData): Call<UserLoginDataResponse>?
 
     @GET("feelings")
     fun getFeelings(): Call<ResponseFeelings>?

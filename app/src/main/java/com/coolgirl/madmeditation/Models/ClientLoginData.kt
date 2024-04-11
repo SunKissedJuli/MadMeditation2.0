@@ -6,9 +6,9 @@ data class UserLoginData (
 )
 
 data class UserLoginDataResponse (
-    val id:String?,
-    val email:String?,
-    val nickName:String?,
-    val avatar:String?,
+    var id:String?,
+    var email:String?,
+    var nickName:String?,
+    var avatar:String?,
     val token:String?,
 )

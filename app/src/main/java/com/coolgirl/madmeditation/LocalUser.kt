@@ -1,39 +1,20 @@
 package com.coolgirl.madmeditation
 
-import android.content.Context
-import android.content.SharedPreferences
 import com.coolgirl.madmeditation.Models.UserLoginDataResponse
 
 private var user : UserLoginDataResponse? = null
-lateinit var pref : SharedPreferences
+
 fun SetLocalUser(newUser : UserLoginDataResponse){
     user = UserLoginDataResponse(
         newUser.id,
         newUser.email,
         newUser.nickName,
         newUser.avatar,
-        newUser.token
-    )
-    val editor = pref.edit()
-    editor.putBoolean("isAutorize", true)
-    editor.putString("id", user?.email)
-    editor.putString("email", user?.email)
-    editor.putString("nickName", user?.nickName)
-    editor.putString("avatar", user?.avatar)
-    editor.putString("token", user?.avatar)
-    editor.apply()
-}
-fun LoadLocalUser(){
-    user = UserLoginDataResponse(
-        pref.getString("id", ""),
-        pref.getString("email", ""),
-        pref.getString("nickName", ""),
-        pref.getString("avatar", ""),
-        pref.getString("token", ""),
-    )
+        newUser.token)
 }
 
 fun GetLocalUser() : UserLoginDataResponse?{
     return user
 }
+
 

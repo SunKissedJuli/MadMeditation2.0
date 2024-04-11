@@ -11,8 +11,8 @@ class PhotoViewModel : ViewModel() {
     val imageLoader = ImageLoader()
     private val imageList = imageLoader.LoadPhotos()
 
-    fun GetImage(imageId: Int) : ProfileState{
-        return imageList.get(imageId)
+    fun GetImage(imageId: Int) : ProfileState? {
+        return imageList?.get(imageId)
     }
 
     fun RemoveImage(imageId: Int, navController: NavController){

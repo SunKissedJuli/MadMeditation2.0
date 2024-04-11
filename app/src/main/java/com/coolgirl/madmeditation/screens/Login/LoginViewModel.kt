@@ -1,21 +1,14 @@
 package com.coolgirl.madmeditation.screens.Login
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
-import com.coolgirl.madmeditation.GetLocalUser
-import com.coolgirl.madmeditation.Models.ApiClient
-import com.coolgirl.madmeditation.Models.ApiController
-import com.coolgirl.madmeditation.Models.UserLoginData
-import com.coolgirl.madmeditation.Screen
-import com.coolgirl.madmeditation.SetLocalUser
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.coolgirl.madmeditation.*
+import com.coolgirl.madmeditation.Models.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class LoginViewModel : ViewModel() {
 
@@ -34,30 +27,23 @@ class LoginViewModel : ViewModel() {
     fun LoadUserData(){
         val user = GetLocalUser()
         if(user?.nickName!=null && !user.nickName.equals("")){
-           userLogin = user.email!!
+            userLogin = user.email!!
         }
     }
 
     fun Autorization(navController: NavHostController) {
-
         var apiClient = ApiClient.start().create(ApiController::class.java)
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val usr = apiClient.autorizeClient(UserLoginData(userLogin, userPassword))
-                kotlin.run {
-                    if (usr.nickName!=null){
-                        withContext(Dispatchers.Main) {
-                            SetLocalUser(usr)
-                            navController.navigate(Screen.Main.route)
-                        }
-                    }
+        val call: Call<UserLoginDataResponse>? = apiClient.autorizeClient(UserLoginData(userLogin, userPassword))
+        call!!.enqueue(object : Callback<UserLoginDataResponse?> {
+            override fun onResponse(call: Call<UserLoginDataResponse?>, response: Response<UserLoginDataResponse?>) {
+                val responseUser = response.body()
+                if (responseUser != null) {
+                    SetLocalUser(responseUser)
+                    SetLoginData(UserLoginData(userLogin,userPassword))
+                    navController.navigate(Screen.Main.route)
                 }
             }
-            catch (e: Exception) {
-                Log.e("tag", "В LoginFragment exeption : ${e.message}")
-            }
-        }
+            override fun onFailure(call: Call<UserLoginDataResponse?>, t: Throwable) {}
+        })
     }
-
 }

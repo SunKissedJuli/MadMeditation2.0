@@ -38,7 +38,7 @@ fun PhotoScreen(navController: NavController, imageId : Int){
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
-                painter = when (val image : ProfileState = viewModel.GetImage(imageId)) {
+                painter = when (val image : ProfileState? = viewModel.GetImage(imageId)) {
                     is ProfileState.ImageResource -> rememberImagePainter(image.resourceId)
                     is ProfileState.ImageUri ->rememberImagePainter(BitmapFactory.decodeFile(image.uri))
                     else -> { rememberImagePainter(R.drawable.sorry)} },

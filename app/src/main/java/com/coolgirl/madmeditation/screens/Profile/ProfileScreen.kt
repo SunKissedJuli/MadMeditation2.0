@@ -129,7 +129,7 @@ fun SetBottomPanel(navController: NavController, viewModel: ProfileViewModel){
 @Composable
 fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, launcher: ManagedActivityResultLauncher<String, Uri?>) {
     key(viewModel.imagee){
-        val columnItems : Int = ((viewModel.SetImageList().size).toFloat()/2).roundToInt()
+        val columnItems : Int = ((viewModel.SetImageList()!!.size)!!.toFloat()/2).roundToInt()
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -138,7 +138,7 @@ fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, lau
         ) {
             items(columnItems) { columnIndex ->
                 LazyRow(modifier = Modifier.fillMaxWidth()) {
-                    val count = if (columnIndex == columnItems - 1 && viewModel.SetImageList().size % 2 != 0) 1 else 2
+                    val count = if (columnIndex == columnItems - 1 && viewModel.SetImageList()!!.size % 2 != 0) 1 else 2
                     items(count) { rowIndex ->
                         val currentIndex = columnIndex * 2 + rowIndex
                         Card(
@@ -149,7 +149,7 @@ fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, lau
                             shape = RoundedCornerShape(15.dp),
                             elevation = 5.dp) {
                             Image(
-                                painter = when (val image = viewModel.SetImageList()[currentIndex]) {
+                                painter = when (val image = viewModel.SetImageList()!![currentIndex]) {
                                     is ProfileState.ImageUri -> rememberImagePainter(BitmapFactory.decodeFile(image.uri))
                                     is ProfileState.ImageResource -> rememberImagePainter(image.resourceId)
                                     else -> { rememberImagePainter(R.drawable.sorry)} },

@@ -1,12 +1,12 @@
 package com.coolgirl.madmeditation
 
-import android.util.Log
+import android.content.SharedPreferences
 import com.coolgirl.madmeditation.screens.Profile.ImageDataDeserializer
 import com.coolgirl.madmeditation.screens.Profile.ProfileState
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
-
+lateinit var pref : SharedPreferences
 class ImageLoader() {
 
     fun SavePhotos(photoList : List<ProfileState>) {
