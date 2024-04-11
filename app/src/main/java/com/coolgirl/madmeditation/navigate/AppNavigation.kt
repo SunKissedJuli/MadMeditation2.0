@@ -1,21 +1,21 @@
 package com.coolgirl.madmeditation
 
-enum class Screen {
-    ONBOARDING,
-    LOGIN,
-    REGISTER,
-    PHOTO,
-    PROFILE,
-    MAIN,
-    MENU
-}
+sealed class Screen(val route: String){
+    object OnBoarding : Screen("onboarding_screen")
 
-sealed class NavigationItem(val route: String){
-    object OnBoarding : NavigationItem(Screen.ONBOARDING.name)
-    object Login : NavigationItem(Screen.LOGIN.name)
-    object Register : NavigationItem(Screen.REGISTER.name)
-    object Photo : NavigationItem(Screen.PHOTO.name)
-    object Profile : NavigationItem(Screen.PROFILE.name)
-    object Main : NavigationItem(Screen.MAIN.name)
-    object Menu : NavigationItem(Screen.MENU.name)
+    object Login : Screen("login_screen")
+
+    object Register : Screen("register_screen")
+
+    object Photo : Screen("photo_screen/{user_photo_id}"){
+        fun user_photo_id(user_photo_id : Int) : String{
+            return "photo_screen/$user_photo_id"
+        }
+    }
+
+    object Profile : Screen("profile_screen")
+
+    object Main : Screen("main_screen")
+
+    object Menu : Screen("menu_screen")
 }

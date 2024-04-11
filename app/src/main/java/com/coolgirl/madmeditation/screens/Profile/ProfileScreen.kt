@@ -31,6 +31,7 @@ import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.R
+import com.coolgirl.madmeditation.Screen
 import com.coolgirl.madmeditation.screens.Profile.ProfileState
 import com.coolgirl.madmeditation.screens.Profile.ProfileViewModel
 import kotlin.math.roundToInt
@@ -65,14 +66,14 @@ fun SetHead(navController: NavController, viewModel: ProfileViewModel){
             contentScale = ContentScale.FillHeight,
             modifier = Modifier
                 .size(20.dp)
-                .clickable { navController.navigate("MENU") })
+                .clickable { navController.navigate(Screen.Menu.route) })
 
         Image(
             modifier = Modifier.fillMaxWidth(0.25f),
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "image")
         Text (
-            modifier = Modifier.clickable{ navController.navigate("LOGIN")},
+            modifier = Modifier.clickable{ navController.navigate(Screen.Login.route)},
             text = stringResource(id = R.string.exit),
             color = colorResource(R.color.white),)
     }
@@ -106,7 +107,7 @@ fun SetBottomPanel(navController: NavController, viewModel: ProfileViewModel){
             modifier = Modifier
                 .fillMaxHeight(0.8f)
                 .alpha(0.3f)
-                .clickable { navController.navigate("MAIN") },
+                .clickable { navController.navigate(Screen.Main.route) },
             painter = painterResource(R.drawable.logo),
             contentDescription = "image")
         Image(
@@ -158,7 +159,7 @@ fun SetPhotoBlock(navController: NavController, viewModel: ProfileViewModel, lau
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .clickable {
-                                        navController.navigate("PHOTO/${currentIndex}") })
+                                        navController.navigate(Screen.Photo.user_photo_id(currentIndex)) })
                         }
                     }
                 }

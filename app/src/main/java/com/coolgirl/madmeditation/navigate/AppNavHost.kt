@@ -1,50 +1,49 @@
 package com.coolgirl.madmeditation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.coolgirl.madmeditation.screens.*
 import com.coolgirl.madmeditation.screens.Login.LoginScreen
-import com.coolgirl.madmeditation.screens.Profile.ProfileState
 
 @Composable
 fun AppNavHost(
-    modifier: Modifier = Modifier,
     navController: NavHostController,
-    startDestination: String = NavigationItem.OnBoarding.route
+    startDestination : String = Screen.OnBoarding.route
 ){
     NavHost(
-        modifier = Modifier,
         navController = navController,
         startDestination = startDestination
     ){
-        composable(NavigationItem.OnBoarding.route){
+        composable(Screen.OnBoarding.route){
             OnBoardingScreen(navController)
         }
-        composable(NavigationItem.Login.route){
+        composable(Screen.Login.route){
             LoginScreen(navController)
         }
-        composable(NavigationItem.Register.route){
+        composable(Screen.Register.route){
             Register(navController)
         }
-        composable(NavigationItem.Photo.route +"/{photo}"){ backStackEntry ->
-            val userPhoto = backStackEntry.arguments?.getString("photo")?.toInt()
-            if (userPhoto!= null) {
-                    PhotoScreen(navController, userPhoto)
-            }
+        composable(Screen.Photo.route,
+        arguments = listOf(navArgument("user_photo_id"){
+            type = NavType.IntType
+            defaultValue = 0
+        })){
+            val user_photo_id: Int = it.arguments?.getInt("user_photo_id")!!
+            PhotoScreen(navController,user_photo_id)
         }
 
-        composable(NavigationItem.Main.route){
+        composable(Screen.Main.route){
             MainScreen(navController)
         }
-        composable(NavigationItem.Profile.route){
+        composable(Screen.Profile.route){
             ProfileScreen(navController)
         }
 
-        composable(NavigationItem.Menu.route){
+        composable(Screen.Menu.route){
             Menu(navController)
         }
     }

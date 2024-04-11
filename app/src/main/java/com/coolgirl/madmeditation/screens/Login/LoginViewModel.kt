@@ -10,6 +10,7 @@ import com.coolgirl.madmeditation.GetLocalUser
 import com.coolgirl.madmeditation.Models.ApiClient
 import com.coolgirl.madmeditation.Models.ApiController
 import com.coolgirl.madmeditation.Models.UserLoginData
+import com.coolgirl.madmeditation.Screen
 import com.coolgirl.madmeditation.SetLocalUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +49,7 @@ class LoginViewModel : ViewModel() {
                     if (usr.nickName!=null){
                         withContext(Dispatchers.Main) {
                             SetLocalUser(usr)
-                            navController.navigate("MAIN")
+                            navController.navigate(Screen.Main.route)
                         }
                     }
                 }

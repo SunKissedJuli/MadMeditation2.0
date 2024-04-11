@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.coolgirl.madmeditation.R
+import com.coolgirl.madmeditation.Screen
 
 
 @Composable
@@ -65,7 +66,7 @@ fun OnBoardingScreen(navController: NavHostController) {
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Button(onClick = { navController.navigate("LOGIN") },
+            Button(onClick = { navController.navigate(Screen.Login.route) },
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.light_green))) {
                 Text(text = stringResource(id = R.string.singin_rus),
                     color = colorResource(R.color.white)
@@ -73,7 +74,7 @@ fun OnBoardingScreen(navController: NavHostController) {
             }
             Text(
                 modifier = Modifier
-                    .clickable { navController.navigate("REGISTER") },
+                    .clickable { navController.navigate(Screen.Register.route)},
                 text = stringResource(id = R.string.want_registration),
                 color = colorResource(R.color.white)
             )

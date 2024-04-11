@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.coolgirl.madmeditation.ImageLoader
+import com.coolgirl.madmeditation.Screen
 import com.coolgirl.madmeditation.screens.Profile.ProfileState
 
 class PhotoViewModel : ViewModel() {
@@ -16,6 +17,6 @@ class PhotoViewModel : ViewModel() {
 
     fun RemoveImage(imageId: Int, navController: NavController){
         imageLoader.RemovePhoto(imageId)
-        navController.navigate("PROFILE")
+        navController.navigate(Screen.Profile.route)
     }
 }

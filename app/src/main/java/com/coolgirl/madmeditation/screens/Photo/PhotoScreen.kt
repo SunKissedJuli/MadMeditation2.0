@@ -17,6 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.R
+import com.coolgirl.madmeditation.Screen
 import com.coolgirl.madmeditation.screens.Photo.PhotoViewModel
 import com.coolgirl.madmeditation.screens.Profile.ProfileState
 
@@ -53,7 +54,7 @@ fun PhotoScreen(navController: NavController, imageId : Int){
                 modifier = Modifier.clickable { viewModel.RemoveImage(imageId, navController)
                 })
             Text(text = stringResource(id = R.string.close), color = colorResource(id = R.color.white),
-                modifier = Modifier.clickable { navController.navigate("PROFILE") })
+                modifier = Modifier.clickable { navController.navigate(Screen.Profile.route) })
         }
     }
 }

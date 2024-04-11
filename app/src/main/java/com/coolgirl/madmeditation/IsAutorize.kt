@@ -8,8 +8,8 @@ fun IsAutorize(){
     val isAutorize = pref.getBoolean("isAutorize", false)
     if(isAutorize){
         LoadLocalUser()
-        AppNavHost(navController = rememberNavController(), startDestination = "MAIN")
+        AppNavHost(navController = rememberNavController(), startDestination = Screen.Main.route)
     }else {
-        AppNavHost(navController = rememberNavController(), startDestination = "ONBOARDING")
+        AppNavHost(navController = rememberNavController(), startDestination = Screen.OnBoarding.route)
     }
 }

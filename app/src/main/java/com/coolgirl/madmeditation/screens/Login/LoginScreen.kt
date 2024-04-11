@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.coolgirl.madmeditation.R
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.coolgirl.madmeditation.Screen
 
 
 @Composable
@@ -101,7 +102,7 @@ fun LoginScreen(navController: NavHostController) {
             ) {
                 Text(text = stringResource(id = R.string.signin), color = colorResource(R.color.white))
             }
-            TextButton(onClick = { navController.navigate("REGISTER") }) {
+            TextButton(onClick = { navController.navigate(Screen.Register.route) }) {
                 Text(text = stringResource(id = R.string.register), color = colorResource(R.color.white))
             }
             Button(

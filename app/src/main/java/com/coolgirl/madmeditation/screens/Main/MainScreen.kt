@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.coolgirl.madmeditation.Models.*
 import com.coolgirl.madmeditation.R
+import com.coolgirl.madmeditation.Screen
 import com.coolgirl.madmeditation.screens.Main.MainViewModel
 
 @Composable
@@ -97,7 +98,7 @@ fun SetMainHead(navController: NavController, viewModel: MainViewModel){
                 contentScale = ContentScale.FillHeight,
                 modifier = Modifier
                     .size(20.dp)
-                    .clickable { navController.navigate("MENU") })
+                    .clickable { navController.navigate(Screen.Menu.route) })
         }
         Image(
             modifier = Modifier
@@ -110,7 +111,7 @@ fun SetMainHead(navController: NavController, viewModel: MainViewModel){
             contentDescription = "image",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .clickable { navController.navigate("PROFILE") }
+                .clickable { navController.navigate(Screen.Profile.route) }
                 .size(40.dp)
                 .clip(CircleShape)
         )
@@ -212,7 +213,7 @@ fun SetMainBottomPanel(navController: NavController, viewModel: MainViewModel){
                 .fillMaxHeight(0.8f)
                 .alpha(0.5f)
                 .size(20.dp)
-                .clickable { navController.navigate("Profile") },
+                .clickable { navController.navigate(Screen.Profile.route) },
             painter = painterResource(R.drawable.profile_icon),
             contentDescription = "image"
         )
